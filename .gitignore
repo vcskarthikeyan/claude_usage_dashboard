@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+.collector.pid
+collector.log
+*.zip
+.claude/
