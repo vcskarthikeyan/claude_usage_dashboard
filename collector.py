@@ -157,9 +157,9 @@ def compute_local_summary(records):
                 b["cache_read_tokens"] += cr
                 b["cost"] += cost
 
-    # Session resets when the oldest call in the window falls off (oldest + 5h)
-    if session_oldest:
-        buckets["session_resets_at"] = (session_oldest + timedelta(hours=5)).isoformat()
+    # Session resets when the newest call in the window expires (newest + 5h)
+    if session_newest:
+        buckets["session_resets_at"] = (session_newest + timedelta(hours=5)).isoformat()
         buckets["session_oldest"] = session_oldest.isoformat()
         buckets["session_newest"] = session_newest.isoformat()
     else:

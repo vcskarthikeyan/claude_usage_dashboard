@@ -310,6 +310,23 @@ CLR_FREE = "#E0E0E0"
 # --- Page config ---
 st.set_page_config(page_title="Claude Session Scheduler", page_icon="⏱", layout="wide")
 
+# --- Fullscreen mode (default on) ---
+if "fullscreen" not in st.session_state:
+    st.session_state["fullscreen"] = False
+_is_fullscreen = st.session_state["fullscreen"]
+if _is_fullscreen:
+    st.markdown(
+        '<style>'
+        'header[data-testid="stHeader"],footer,[data-testid="stSidebar"],'
+        '[data-testid="stSidebarCollapsedControl"],.stDeployButton,'
+        '[data-testid="stStatusWidget"],[data-testid="stToolbar"],'
+        '[data-testid="stDecoration"],#MainMenu'
+        '{display:none!important;visibility:hidden!important;}'
+        '.block-container{max-width:100%!important;padding:0.5rem 2rem!important;}'
+        '</style>',
+        unsafe_allow_html=True,
+    )
+
 # --- Load persisted data & determine dashboard state ---
 persisted = load_data()
 if "session_start" not in st.session_state and "session_start" in persisted:
@@ -446,6 +463,16 @@ _timer_js = '''<script>
 
   tick();
   setInterval(tick, 1000);
+
+  // ESC key exits fullscreen
+  doc.addEventListener('keydown', function(e) {{
+    if (e.key === 'Escape') {{
+      var all = doc.querySelectorAll('button');
+      for (var i = 0; i < all.length; i++) {{
+        if ((all[i].textContent || '').indexOf('Exit') >= 0) {{ all[i].click(); return; }}
+      }}
+    }}
+  }});
 }})();
 </script>'''.format(
     window_end=_window_end_epoch_ms,
@@ -637,13 +664,72 @@ with st.sidebar:
                     st.error("No collector data yet. Start the dashboard first.")
 
 
-# ==================== Main Area ====================
+# ==================== Tab Navigation ====================
+if "active_tab" not in st.session_state:
+    st.session_state["active_tab"] = "dashboard"
+
+_fs_label = "Exit FS" if _is_fullscreen else "FS"
+_fs_tip = "Exit Fullscreen" if _is_fullscreen else "Enter Fullscreen"
+
+_tab_cols = st.columns([5, 5, 1])
+with _tab_cols[0]:
+    if st.button("Claude Usage Dashboard", key="tab_btn_dash", use_container_width=True,
+                  type="primary" if st.session_state["active_tab"] == "dashboard" else "secondary"):
+        st.session_state["active_tab"] = "dashboard"
+        st.rerun()
+with _tab_cols[1]:
+    if st.button("World Clock", key="tab_btn_wc", use_container_width=True,
+                  type="primary" if st.session_state["active_tab"] == "worldclock" else "secondary"):
+        st.session_state["active_tab"] = "worldclock"
+        st.rerun()
+with _tab_cols[2]:
+    if st.button(_fs_label, key="fs_toggle", use_container_width=True, help=_fs_tip):
+        st.session_state["fullscreen"] = not st.session_state["fullscreen"]
+        st.rerun()
+
+if st.session_state["active_tab"] == "worldclock":
+    _wc_path = os.path.join(APP_DIR, "world-clock-final.html")
+    if os.path.exists(_wc_path):
+        with open(_wc_path, "r") as _wf:
+            _wc_html = _wf.read()
+        if _is_fullscreen:
+            _fs_css = (
+                '<style>'
+                '.controls-section{display:none}'
+                '.selected-tags{display:none}'
+                '.container{padding:0.5rem 1rem}'
+                '.clock.size-1{width:420px;height:420px}'
+                '.clock.size-2{width:360px;height:360px}'
+                '.clock.size-3{width:320px;height:320px}'
+                '.clock.size-4{width:300px;height:300px}'
+                '.clock.size-5{width:280px;height:280px}'
+                '.clock.size-6{width:280px;height:280px}'
+                '.clock.size-1 .digital-time{font-size:3.5rem}'
+                '.clock.size-2 .digital-time{font-size:3rem}'
+                '.clock.size-3 .digital-time{font-size:2.5rem}'
+                '.clock.size-4 .digital-time{font-size:2.2rem}'
+                '.clock.size-5 .digital-time{font-size:2rem}'
+                '.clock.size-6 .digital-time{font-size:2rem}'
+                '.clocks-grid{gap:2rem;margin-top:0.5rem}'
+                '.clock-city-name{font-size:1.4rem}'
+                '.clock-time{font-size:1.1rem}'
+                '</style>'
+            )
+            _wc_html = _wc_html.replace('</head>', _fs_css + '</head>')
+        components.html(_wc_html, height=2000 if _is_fullscreen else 1500, scrolling=True)
+    else:
+        st.warning("world-clock-final.html not found.")
+    st.stop()
+
+# ==================== Main Area (Dashboard) ====================
 
 st.markdown(
     '<style>'
     'h1,h2,h3{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}}'
-    '.block-container{{max-width:1200px;}}'
-    '</style>'.replace("{{", "{").replace("}}", "}"),
+    '.block-container{{max-width:{mw};}}'
+    '</style>'.format(
+        mw="100%" if _is_fullscreen else "1200px",
+    ),
     unsafe_allow_html=True,
 )
 
@@ -790,40 +876,49 @@ else:
 sess_bar_clr = bar_color(sess_pct)
 week_bar_clr = bar_color(week_pct)
 
+# Fullscreen-aware sizes
+_fs_pct = '56px' if _is_fullscreen else '28px'
+_fs_bar = '16px' if _is_fullscreen else '8px'
+_fs_pad = '36px 40px' if _is_fullscreen else '24px 28px'
+_fs_lbl = '18px' if _is_fullscreen else '15px'
+_fs_det = '15px' if _is_fullscreen else '12px'
+_fs_rst = '16px' if _is_fullscreen else '12px'
+
 usage_html = (
     '<div style="display:flex;gap:20px;margin-bottom:28px;font-family:-apple-system,BlinkMacSystemFont,'
     '\'Segoe UI\',Roboto,sans-serif;">'
     ''
-    '  <div style="flex:1;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;padding:24px 28px;">'
+    '  <div style="flex:1;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;padding:{fs_pad};">'
     '    <div style="display:flex;justify-content:space-between;align-items:center;">'
-    '      <div style="font-size:15px;font-weight:600;color:#1A1A1A;">Session usage <span style="font-size:10px;font-weight:400;color:#CCC;">(estimate)</span></div>'
-    '      <div style="font-size:28px;font-weight:700;color:{sess_clr};">~{sess_pct:.0f}%</div>'
+    '      <div style="font-size:{fs_lbl};font-weight:600;color:#1A1A1A;">Session usage <span style="font-size:10px;font-weight:400;color:#CCC;">(estimate)</span></div>'
+    '      <div style="font-size:{fs_pct};font-weight:700;color:{sess_clr};">~{sess_pct:.0f}%</div>'
     '    </div>'
-    '    <div style="font-size:12px;color:#B0B0B0;margin:4px 0 14px;">{sess_detail}</div>'
-    '    <div style="background:#F3F4F6;border-radius:6px;height:8px;overflow:hidden;margin-bottom:14px;">'
+    '    <div style="font-size:{fs_det};color:#B0B0B0;margin:4px 0 14px;">{sess_detail}</div>'
+    '    <div style="background:#F3F4F6;border-radius:6px;height:{fs_bar};overflow:hidden;margin-bottom:14px;">'
     '      <div style="background:{sess_clr};height:100%;width:{sess_pct:.1f}%;border-radius:6px;'
     '      transition:width 0.5s ease;"></div>'
     '    </div>'
-    '    <div id="live-sess-reset" style="font-size:12px;color:#9CA3AF;">{sess_reset}</div>'
+    '    <div id="live-sess-reset" style="font-size:{fs_rst};color:#9CA3AF;">{sess_reset}</div>'
     '  </div>'
     ''
-    '  <div style="flex:1;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;padding:24px 28px;">'
+    '  <div style="flex:1;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:16px;padding:{fs_pad};">'
     '    <div style="display:flex;justify-content:space-between;align-items:center;">'
-    '      <div style="font-size:15px;font-weight:600;color:#1A1A1A;">Weekly usage <span style="font-size:10px;font-weight:400;color:#CCC;">(estimate)</span></div>'
-    '      <div style="font-size:28px;font-weight:700;color:{week_clr};">~{week_pct:.0f}%</div>'
+    '      <div style="font-size:{fs_lbl};font-weight:600;color:#1A1A1A;">Weekly usage <span style="font-size:10px;font-weight:400;color:#CCC;">(estimate)</span></div>'
+    '      <div style="font-size:{fs_pct};font-weight:700;color:{week_clr};">~{week_pct:.0f}%</div>'
     '    </div>'
-    '    <div style="font-size:12px;color:#B0B0B0;margin:4px 0 14px;">{week_detail}</div>'
-    '    <div style="background:#F3F4F6;border-radius:6px;height:8px;overflow:hidden;margin-bottom:14px;">'
+    '    <div style="font-size:{fs_det};color:#B0B0B0;margin:4px 0 14px;">{week_detail}</div>'
+    '    <div style="background:#F3F4F6;border-radius:6px;height:{fs_bar};overflow:hidden;margin-bottom:14px;">'
     '      <div style="background:{week_clr};height:100%;width:{week_pct:.1f}%;border-radius:6px;'
     '      transition:width 0.5s ease;"></div>'
     '    </div>'
-    '    <div id="live-week-reset" style="font-size:12px;color:#9CA3AF;">{week_reset}</div>'
+    '    <div id="live-week-reset" style="font-size:{fs_rst};color:#9CA3AF;">{week_reset}</div>'
     '  </div>'
     ''
     '</div>'
 ).format(
     sess_pct=sess_pct, sess_clr=sess_bar_clr, sess_reset=sess_reset_str, sess_detail=sess_detail,
     week_pct=week_pct, week_clr=week_bar_clr, week_reset=week_reset_str, week_detail=week_detail,
+    fs_pct=_fs_pct, fs_bar=_fs_bar, fs_pad=_fs_pad, fs_lbl=_fs_lbl, fs_det=_fs_det, fs_rst=_fs_rst,
 )
 
 st.markdown(usage_html, unsafe_allow_html=True)
@@ -875,22 +970,26 @@ else:
             '<span class="live-remaining">{rem}</span></strong> remaining</div>'
         ).format(bg=CLR_ACTIVE_BG, c=CLR_ACTIVE, rem=remaining_str)
 
+    _m_sz = '42px' if _is_fullscreen else '26px'
+    _m_lbl = '14px' if _is_fullscreen else '11px'
+    _m_pad = '28px' if _is_fullscreen else '18px'
     metrics_html = (
         '<div style="display:flex;gap:14px;margin-bottom:18px;">'
-        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:18px;text-align:center;">'
-        '    <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;">Session Start</div>'
-        '    <div style="font-size:26px;font-weight:700;color:#222;margin-top:6px;">{start}</div>'
+        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:{m_pad};text-align:center;">'
+        '    <div style="font-size:{m_lbl};color:#999;text-transform:uppercase;letter-spacing:1px;">Session Start</div>'
+        '    <div style="font-size:{m_sz};font-weight:700;color:#222;margin-top:6px;">{start}</div>'
         '  </div>'
-        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:18px;text-align:center;">'
-        '    <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;">Balance Time</div>'
-        '    <div class="live-remaining" style="font-size:26px;font-weight:700;color:{rem_clr};margin-top:6px;">{rem}</div>'
+        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:{m_pad};text-align:center;">'
+        '    <div style="font-size:{m_lbl};color:#999;text-transform:uppercase;letter-spacing:1px;">Balance Time</div>'
+        '    <div class="live-remaining" style="font-size:{m_sz};font-weight:700;color:{rem_clr};margin-top:6px;">{rem}</div>'
         '  </div>'
-        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:18px;text-align:center;">'
-        '    <div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;">Window Ends</div>'
-        '    <div style="font-size:26px;font-weight:700;color:#222;margin-top:6px;">{end}</div>'
+        '  <div style="flex:1;background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:{m_pad};text-align:center;">'
+        '    <div style="font-size:{m_lbl};color:#999;text-transform:uppercase;letter-spacing:1px;">Window Ends</div>'
+        '    <div style="font-size:{m_sz};font-weight:700;color:#222;margin-top:6px;">{end}</div>'
         '  </div>'
         '</div>'
-    ).format(start=start_str, rem=remaining_str, rem_clr=remaining_color, end=end_str)
+    ).format(start=start_str, rem=remaining_str, rem_clr=remaining_color, end=end_str,
+             m_sz=_m_sz, m_lbl=_m_lbl, m_pad=_m_pad)
 
     progress_html = (
         '<div style="margin-bottom:24px;">'
@@ -992,25 +1091,41 @@ else:
     )
 
     # Render all sections
-    full_html = (
-        '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;">'
-        '  <h2 style="color:#222;margin-bottom:14px;">Current Session</h2>'
-        '  {banner}'
-        '  {metrics}'
-        '  {progress}'
-        '  {div}'
-        '  <h2 style="color:#222;margin-bottom:14px;">Today\'s Session Plan</h2>'
-        '  {cards}'
-        '  {div}'
-        '  <h2 style="color:#222;margin-bottom:14px;">Daily Timeline</h2>'
-        '  {timeline}'
-        '  {div}'
-        '  <h2 style="color:#222;margin-bottom:14px;">Usage Tips</h2>'
-        '  {tips}'
-        '</div>'
-    ).format(
-        banner=banner_html, metrics=metrics_html, progress=progress_html,
-        cards=cards_html, timeline=timeline_html, tips=tips_html, div=divider,
-    )
+    if _is_fullscreen:
+        full_html = (
+            '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;">'
+            '  <h2 style="color:#222;margin-bottom:14px;">Current Session</h2>'
+            '  {banner}'
+            '  {metrics}'
+            '  {progress}'
+            '  {div}'
+            '  <h2 style="color:#222;margin-bottom:14px;">Today\'s Session Plan</h2>'
+            '  {cards}'
+            '</div>'
+        ).format(
+            banner=banner_html, metrics=metrics_html, progress=progress_html,
+            cards=cards_html, div=divider,
+        )
+    else:
+        full_html = (
+            '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;">'
+            '  <h2 style="color:#222;margin-bottom:14px;">Current Session</h2>'
+            '  {banner}'
+            '  {metrics}'
+            '  {progress}'
+            '  {div}'
+            '  <h2 style="color:#222;margin-bottom:14px;">Today\'s Session Plan</h2>'
+            '  {cards}'
+            '  {div}'
+            '  <h2 style="color:#222;margin-bottom:14px;">Daily Timeline</h2>'
+            '  {timeline}'
+            '  {div}'
+            '  <h2 style="color:#222;margin-bottom:14px;">Usage Tips</h2>'
+            '  {tips}'
+            '</div>'
+        ).format(
+            banner=banner_html, metrics=metrics_html, progress=progress_html,
+            cards=cards_html, timeline=timeline_html, tips=tips_html, div=divider,
+        )
 
     st.markdown(full_html, unsafe_allow_html=True)

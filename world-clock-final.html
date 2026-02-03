@@ -567,7 +567,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
+            gap: 0.5rem;
         }
 
         .clock {
@@ -798,6 +798,16 @@
         .dial-digital-ocean { background: linear-gradient(135deg, #001a33 0%, #003366 100%); }
         .dial-digital-sunset { background: linear-gradient(135deg, #2a1a0a 0%, #4a2a0a 100%); }
         .dial-digital-vintage { background: linear-gradient(135deg, #1a1a1a 0%, #3a3a2a 100%); }
+        .dial-digital-matrix { background: linear-gradient(135deg, #001a00 0%, #003300 100%); }
+        .dial-digital-fire { background: linear-gradient(135deg, #3a0a00 0%, #6b1a00 100%); }
+        .dial-digital-ice { background: linear-gradient(135deg, #0a1a3a 0%, #1a3a6b 100%); }
+        .dial-digital-gold { background: linear-gradient(135deg, #2a1a00 0%, #5a3a00 100%); }
+        .dial-digital-purple { background: linear-gradient(135deg, #1a0033 0%, #330066 100%); }
+        .dial-digital-coral { background: linear-gradient(135deg, #3a0a1a 0%, #6b1a3a 100%); }
+        .dial-digital-slate { background: linear-gradient(135deg, #1a1a2a 0%, #2a2a4a 100%); }
+        .dial-digital-emerald { background: linear-gradient(135deg, #002a1a 0%, #005a3a 100%); }
+        .dial-digital-ruby { background: linear-gradient(135deg, #2a000a 0%, #5a001a 100%); }
+        .dial-digital-amber { background: linear-gradient(135deg, #2a1a00 0%, #4a3300 100%); }
 
         /* Toast Notification */
         .toast {
@@ -830,15 +840,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-title">
-                <i class="fas fa-globe globe-icon"></i>
-                <span>World Clock Pro</span>
-            </div>
-            <p class="header-subtitle">Select up to 6 cities and customize each clock display (Works Offline)</p>
-        </div>
-
         <!-- Controls Section -->
         <div class="controls-section">
             <div class="controls-header">
@@ -911,6 +912,15 @@
                 <i class="fas fa-globe"></i>
             </div>
             <p class="empty-text">Select cities from the dropdown to get started</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align:center;padding:2rem 0 0.5rem;opacity:0.5;">
+            <div style="font-size:0.8rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                <i class="fas fa-globe" style="color:var(--primary);font-size:0.7rem;"></i>
+                <span>World Clock Pro</span>
+            </div>
+            <p style="font-size:0.7rem;color:var(--text-light);margin-top:0.25rem;">Select up to 6 cities and customize each clock display (Works Offline)</p>
         </div>
     </div>
 
@@ -1041,6 +1051,16 @@
             { id: 'digital-ocean', name: 'Dig Ocean', class: 'dial-digital-ocean' },
             { id: 'digital-sunset', name: 'Dig Sunset', class: 'dial-digital-sunset' },
             { id: 'digital-vintage', name: 'Dig Vintage', class: 'dial-digital-vintage' },
+            { id: 'digital-matrix', name: 'Dig Matrix', class: 'dial-digital-matrix' },
+            { id: 'digital-fire', name: 'Dig Fire', class: 'dial-digital-fire' },
+            { id: 'digital-ice', name: 'Dig Ice', class: 'dial-digital-ice' },
+            { id: 'digital-gold', name: 'Dig Gold', class: 'dial-digital-gold' },
+            { id: 'digital-purple', name: 'Dig Purple', class: 'dial-digital-purple' },
+            { id: 'digital-coral', name: 'Dig Coral', class: 'dial-digital-coral' },
+            { id: 'digital-slate', name: 'Dig Slate', class: 'dial-digital-slate' },
+            { id: 'digital-emerald', name: 'Dig Emerald', class: 'dial-digital-emerald' },
+            { id: 'digital-ruby', name: 'Dig Ruby', class: 'dial-digital-ruby' },
+            { id: 'digital-amber', name: 'Dig Amber', class: 'dial-digital-amber' },
         ];
 
         let selectedCities = [];
@@ -1073,6 +1093,10 @@
                 const config = JSON.parse(saved);
                 selectedCities = config.cities || [];
                 clockStyles = config.styles || {};
+            } else {
+                selectedCities = ['Chennai', 'New Taipei', 'Tel Aviv', 'New York', 'London', 'Auckland'];
+                clockStyles = {};
+                selectedCities.forEach(c => clockStyles[c] = 'digital');
             }
             updateUI();
         }
@@ -1231,12 +1255,16 @@
             });
         }
 
+        // 10 trending dial styles for picker
+        const trendingStyleIds = ['digital', 'modern', 'elegant', 'sunset', 'ocean', 'neon', 'aurora', 'rose', 'digital-cyberpunk', 'digital-matrix'];
+        const trendingDialStyles = dialStyles.filter(s => trendingStyleIds.includes(s.id));
+
         // Render styles
         function renderStyles() {
             stylesGrid.innerHTML = '';
             if (!selectedCityForStyle) return;
 
-            dialStyles.forEach((style) => {
+            trendingDialStyles.forEach((style) => {
                 const btn = document.createElement('button');
                 btn.className = `style-btn ${clockStyles[selectedCityForStyle] === style.id ? 'active' : ''}`;
                 btn.innerHTML = `
@@ -1261,7 +1289,7 @@
             } else if (selectedCities.length < 6) {
                 selectedCities.push(cityName);
                 // Auto-assign style
-                clockStyles[cityName] = dialStyles[selectedCities.length - 1]?.id || 'modern';
+                clockStyles[cityName] = 'digital';
             }
             markChanges();
             updateUI();
@@ -1298,8 +1326,8 @@
             selectedTags.innerHTML = '';
             selectedCities.forEach((cityName) => {
                 const city = allCities.find(c => c.name === cityName);
-                const styleId = clockStyles[cityName] || 'modern';
-                const styleName = dialStyles.find(s => s.id === styleId)?.name || 'Modern';
+                const styleId = clockStyles[cityName] || 'digital';
+                const styleName = dialStyles.find(s => s.id === styleId)?.name || 'Digital';
                 
                 const tag = document.createElement('div');
                 tag.className = 'city-tag';
@@ -1352,7 +1380,7 @@
 
             selectedCities.forEach((cityName) => {
                 const city = allCities.find(c => c.name === cityName);
-                const styleId = clockStyles[cityName] || dialStyles[0]?.id || 'modern';
+                const styleId = clockStyles[cityName] || 'digital';
                 const clockEl = createClock(city, styleId);
                 clocksGrid.appendChild(clockEl);
             });
@@ -1366,7 +1394,7 @@
             const clockSize = getClockSize();
             const time = getTimeForTimezone(city.timezone);
             const dialStyle = dialStyles.find(d => d.id === styleId);
-            const isDigital = styleId === 'digital';
+            const isDigital = styleId.startsWith('digital');
 
             // Calculate hand positions
             const secondDegrees = (time.seconds / 60) * 360;
@@ -1396,10 +1424,14 @@
                 `;
             }
 
+            const flagSizeMap = { 'size-1': 96, 'size-2': 77, 'size-3': 67, 'size-4': 62, 'size-5': 58, 'size-6': 58 };
+            const flagPx = flagSizeMap[clockSize] || 58;
+
             wrapper.innerHTML = `
                 <div class="clock ${clockSize}">
                     ${clockContent}
                 </div>
+                <div style="font-size:${flagPx}px;text-align:center;line-height:1;">${city.flag}</div>
                 <div class="clock-info">
                     <div class="clock-city-name">${city.name}</div>
                     <div class="clock-time">${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}</div>
@@ -1421,6 +1453,10 @@
                 'digital-cyberpunk': '#ff00ff', 'digital-midnight': '#0099ff', 'digital-space': '#ff00ff',
                 'digital-forest': '#00ff00', 'digital-ocean': '#00ffff', 'digital-sunset': '#ffaa00',
                 'digital-vintage': '#ffff00',
+                'digital-matrix': '#00ff00', 'digital-fire': '#ff4400', 'digital-ice': '#88ccff',
+                'digital-gold': '#ffcc00', 'digital-purple': '#cc00ff', 'digital-coral': '#ff6688',
+                'digital-slate': '#8888aa', 'digital-emerald': '#00ff88', 'digital-ruby': '#ff0044',
+                'digital-amber': '#ffaa00',
             };
             return colors[styleId] || '#ffffff';
         }
@@ -1436,6 +1472,10 @@
                 'digital-cyberpunk': '#ff00ff', 'digital-midnight': '#0099ff', 'digital-space': '#ff00ff',
                 'digital-forest': '#00ff00', 'digital-ocean': '#00ffff', 'digital-sunset': '#ffaa00',
                 'digital-vintage': '#ffff00',
+                'digital-matrix': '#00ff00', 'digital-fire': '#ff4400', 'digital-ice': '#88ccff',
+                'digital-gold': '#ffcc00', 'digital-purple': '#cc00ff', 'digital-coral': '#ff6688',
+                'digital-slate': '#8888aa', 'digital-emerald': '#00ff88', 'digital-ruby': '#ff0044',
+                'digital-amber': '#ffaa00',
             };
             return colors[styleId] || '#ffffff';
         }
@@ -1484,7 +1524,7 @@
 
                 const city = allCities.find(c => c.name === cityName);
                 const styleId = clockStyles[cityName];
-                const isDigital = styleId === 'digital';
+                const isDigital = styleId && styleId.startsWith('digital');
                 const time = getTimeForTimezone(city.timezone);
 
                 if (isDigital) {
@@ -1510,9 +1550,35 @@
             });
         }
 
+        // Highlight local timezone clock
+        function highlightLocalClock() {
+            const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const localCity = allCities.find(c => c.timezone === localTz);
+            if (!localCity) return;
+            const idx = selectedCities.indexOf(localCity.name);
+            if (idx < 0) return;
+            const wrappers = document.querySelectorAll('.clock-wrapper');
+            if (wrappers[idx]) {
+                wrappers[idx].style.border = '3px solid #667eea';
+                wrappers[idx].style.borderRadius = '16px';
+                wrappers[idx].style.padding = '0.75rem';
+                wrappers[idx].style.background = 'rgba(102, 126, 234, 0.06)';
+                wrappers[idx].style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.15)';
+                const badge = document.createElement('div');
+                badge.style.cssText = 'font-size:0.7rem;font-weight:700;color:#667eea;text-transform:uppercase;letter-spacing:1.5px;margin-top:0.25rem;';
+                badge.innerHTML = '<span style="font-size:0.5rem;">&#9679;</span> LOCAL';
+                const info = wrappers[idx].querySelector('.clock-info');
+                if (info) info.appendChild(badge);
+            }
+        }
+
         // Initialize
         loadConfiguration();
+        highlightLocalClock();
         setInterval(updateClockHands, 1000);
+        // Re-highlight after any UI update
+        const origUpdateUI = updateUI;
+        updateUI = function() { origUpdateUI(); setTimeout(highlightLocalClock, 50); };
     </script>
 </body>
 </html>
