@@ -4,7 +4,7 @@ import os
 import glob
 import subprocess
 import signal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from pathlib import Path
 
 # --- Constants ---
@@ -560,22 +560,41 @@ with st.sidebar:
         st.divider()
 
         st.subheader("Manual Entry")
-        col_d, col_t = st.columns(2)
-        with col_d:
-            manual_date = st.date_input("Date", value=datetime.now().date())
-        with col_t:
-            manual_time = st.time_input("Time", value=datetime.now().time().replace(second=0, microsecond=0))
+        with st.form("manual_time_form", clear_on_submit=False):
+            col_d, col_h, col_m = st.columns(3)
+            with col_d:
+                manual_date = st.date_input(
+                    "Date",
+                    value=datetime.now().date(),
+                    key="manual_date_input",
+                )
+            with col_h:
+                manual_hour = st.selectbox(
+                    "Hour",
+                    options=list(range(0, 24)),
+                    index=datetime.now().hour,
+                    key="manual_hour_input",
+                )
+            with col_m:
+                manual_minute = st.selectbox(
+                    "Minute",
+                    options=list(range(0, 60)),
+                    index=datetime.now().minute,
+                    key="manual_minute_input",
+                )
 
-        if st.button("Set Manual Time", use_container_width=True):
-            manual_dt = datetime.combine(manual_date, manual_time)
-            if manual_dt > datetime.now():
-                st.error("Cannot be in the future.")
-            else:
-                st.session_state["session_start"] = manual_dt
-                d = load_data()
-                d["session_start"] = manual_dt.isoformat()
-                save_data(d)
-                st.rerun()
+            set_manual = st.form_submit_button("Set Manual Time", use_container_width=True)
+            if set_manual:
+                manual_time = time(hour=int(manual_hour), minute=int(manual_minute))
+                manual_dt = datetime.combine(manual_date, manual_time)
+                if manual_dt > datetime.now():
+                    st.error("Cannot be in the future.")
+                else:
+                    st.session_state["session_start"] = manual_dt
+                    d = load_data()
+                    d["session_start"] = manual_dt.isoformat()
+                    save_data(d)
+                    st.rerun()
 
         st.divider()
 

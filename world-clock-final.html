@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clock Pro - Premium Design</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --accent: #ff6b6b;
+            --bg: #f9fafb;
+            --bg-dark: #1a202c;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --border-dark: #374151;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #f3f4f6 100%);
+            color: var(--text);
+            transition: background 0.3s;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f172a 100%);
+            color: #e5e7eb;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        body.dark-mode .header-subtitle {
+            color: #9ca3af;
+        }
+
+        .globe-icon {
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .controls-section {
+            background: #1f2937;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-mode .control-label {
+            color: #e5e7eb;
+        }
+
+        /* Checkbox */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* Save Button */
+        .save-button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        .save-button.hidden {
+            display: none;
+        }
+
+        /* Dropdown */
+        .dropdown-wrapper {
+            position: relative;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px solid #e9d5ff;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .dropdown-btn {
+            background: #374151;
+            border-color: #6b21a8;
+            color: #e5e7eb;
+        }
+
+        .dropdown-btn:hover {
+            border-color: var(--primary);
+            background: #faf5ff;
+        }
+
+        body.dark-mode .dropdown-btn:hover {
+            background: #4b5563;
+        }
+
+        .dropdown-btn-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e9d5ff;
+            border-top: none;
+            border-radius: 0 0 0.75rem 0.75rem;
+            margin-top: -2px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .dropdown-menu {
+            background: #1f2937;
+            border-color: #6b21a8;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-menu.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-input-wrapper {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        body.dark-mode .search-input-wrapper {
+            background: #1f2937;
+            border-color: var(--border-dark);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        body.dark-mode .search-input {
+            background: #374151;
+            border-color: var(--border-dark);
+            color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .items-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .item:hover {
+            background: #f3f4f6;
+        }
+
+        body.dark-mode .item:hover {
+            background: #374151;
+        }
+
+        .item.selected {
+            background: #fce7f3;
+            border-left-color: var(--primary);
+        }
+
+        body.dark-mode .item.selected {
+            background: #581c87;
+        }
+
+        .item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-flag {
+            font-size: 1.25rem;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-name {
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        body.dark-mode .item-name {
+            color: #e5e7eb;
+        }
+
+        .item-meta {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        body.dark-mode .item-meta {
+            color: #9ca3af;
+        }
+
+        .item.selected .item-name {
+            font-weight: 600;
+        }
+
+        .checkmark {
+            margin-left: auto;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .no-items-msg {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Style Selection Container */
+        .style-selection-container {
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        body.dark-mode .style-selection-container {
+            background: #374151;
+        }
+
+        .style-selection-container.active {
+            display: block;
+        }
+
+        .style-selection-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-mode .style-selection-title {
+            color: #e5e7eb;
+        }
+
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .style-btn {
+            aspect-ratio: 1;
+            border: 3px solid transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s;
+            background: white;
+            padding: 0.4rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark-mode .style-btn {
+            background: #4b5563;
+        }
+
+        .style-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .style-btn.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .style-preview {
+            width: 100%;
+            height: 70%;
+            border-radius: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: white;
+            overflow: hidden;
+        }
+
+        .style-name {
+            font-size: 0.65rem;
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        body.dark-mode .style-name {
+            color: #9ca3af;
+        }
+
+        /* Selected Cities Tags */
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .city-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .city-tag-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .city-tag-style {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.25rem;
+        }
+
+        .city-tag-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-left: 0.5rem;
+        }
+
+        .edit-city-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .edit-city-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .remove-city-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.2rem;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .remove-city-btn:hover {
+            opacity: 1;
+        }
+
+        /* Clocks Grid */
+        .clocks-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+            justify-items: center;
+        }
+
+        .clocks-grid.grid-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .clocks-grid.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .clocks-grid.grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .clocks-grid.grid-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .clocks-grid.grid-5 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .clocks-grid.grid-6 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @media (max-width: 768px) {
+            .clocks-grid.grid-2,
+            .clocks-grid.grid-3,
+            .clocks-grid.grid-4,
+            .clocks-grid.grid-5,
+            .clocks-grid.grid-6 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Clock */
+        .clock-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .clock {
+            position: relative;
+            border-radius: 50%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock.size-1 { width: 320px; height: 320px; }
+        .clock.size-2 { width: 256px; height: 256px; }
+        .clock.size-3 { width: 224px; height: 224px; }
+        .clock.size-4 { width: 208px; height: 208px; }
+        .clock.size-5 { width: 192px; height: 192px; }
+        .clock.size-6 { width: 192px; height: 192px; }
+
+        .clock-face {
+            position: absolute;
+            width: 96%;
+            height: 96%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .digital-clock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            text-align: center;
+            padding: 1rem;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .digital-clock::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
+        }
+
+        .digital-time {
+            font-size: 1.8rem;
+            line-height: 1.2;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.1);
+            z-index: 1;
+            position: relative;
+            font-weight: 800;
+        }
+
+        .digital-date {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0.85;
+            letter-spacing: 0.08em;
+            z-index: 1;
+            position: relative;
+        }
+
+        .clock.size-1 .digital-time { font-size: 2.8rem; }
+        .clock.size-1 .digital-date { font-size: 1.1rem; }
+        .clock.size-2 .digital-time { font-size: 2.2rem; }
+        .clock.size-2 .digital-date { font-size: 1rem; }
+        .clock.size-3 .digital-time { font-size: 1.8rem; }
+        .clock.size-3 .digital-date { font-size: 0.85rem; }
+
+        .hour-marker {
+            position: absolute;
+            transform-origin: center;
+        }
+
+        .hand {
+            position: absolute;
+            transform-origin: bottom center;
+            border-radius: 10px;
+        }
+
+        .center-dot {
+            z-index: 7;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        body.dark-mode .empty-icon {
+            color: #4b5563;
+        }
+
+        .empty-text {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        body.dark-mode .empty-text {
+            color: #9ca3af;
+        }
+
+        /* Clock Info */
+        .clock-info {
+            text-align: center;
+        }
+
+        .clock-city-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark-mode .clock-city-name {
+            color: white;
+        }
+
+        .clock-time {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-family: 'Space Mono', monospace;
+        }
+
+        body.dark-mode .clock-time {
+            color: #9ca3af;
+        }
+
+        .clock-timezone {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+
+        /* Dial Styles */
+        .dial-modern { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .dial-minimal { background: #ffffff; border: 3px solid #1f2937; }
+        body.dark-mode .dial-minimal { background: #374151; border-color: #e5e7eb; }
+        .dial-elegant { background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%); }
+        .dial-sunset { background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); }
+        .dial-ocean { background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); }
+        .dial-forest { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+        .dial-neon { background: #1a1a2e; }
+        .dial-vintage { background: linear-gradient(135deg, #d4a574 0%, #c4956b 100%); }
+        .dial-cotton-candy { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+        .dial-aurora { background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%); }
+        .dial-crimson { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+        .dial-olive { background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%); }
+        .dial-indigo { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); }
+        .dial-rose { background: linear-gradient(135deg, #f43f5e 0%, #be185d 100%); }
+        .dial-sky { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
+        
+        /* Digital Dials */
+        .dial-digital { background: #1a1a2e; }
+        .dial-digital-dark { background: #0f172a; }
+        .dial-digital-tech { background: linear-gradient(135deg, #1a1a2e 0%, #2d3748 100%); }
+        .dial-digital-neon-blue { background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%); }
+        .dial-digital-cyberpunk { background: linear-gradient(135deg, #0d0221 0%, #3a0f5c 100%); }
+        .dial-digital-midnight { background: linear-gradient(135deg, #1a1f3a 0%, #16213e 100%); }
+        .dial-digital-space { background: linear-gradient(135deg, #0a0a1a 0%, #1a0033 100%); }
+        .dial-digital-forest { background: linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 100%); }
+        .dial-digital-ocean { background: linear-gradient(135deg, #001a33 0%, #003366 100%); }
+        .dial-digital-sunset { background: linear-gradient(135deg, #2a1a0a 0%, #4a2a0a 100%); }
+        .dial-digital-vintage { background: linear-gradient(135deg, #1a1a1a 0%, #3a3a2a 100%); }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+            z-index: 99;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <i class="fas fa-globe globe-icon"></i>
+                <span>World Clock Pro</span>
+            </div>
+            <p class="header-subtitle">Select up to 6 cities and customize each clock display (Works Offline)</p>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="controls-header">
+                <div style="flex: 1;">
+                    <label class="control-label checkbox-wrapper">
+                        <input 
+                            type="checkbox" 
+                            id="customizeClocks" 
+                            class="checkbox-input"
+                        >
+                        <span>Customize Each Clock</span>
+                    </label>
+                </div>
+                <button class="save-button hidden" id="saveBtn" title="Save your configuration">
+                    <i class="fas fa-save"></i>
+                    <span>Save Configuration</span>
+                </button>
+            </div>
+
+            <div class="controls-grid">
+                <!-- City Selector -->
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-city"></i>
+                        Select Cities
+                    </label>
+                    <div class="dropdown-wrapper">
+                        <button class="dropdown-btn" id="dropdownBtn">
+                            <div class="dropdown-btn-text">
+                                <i class="fas fa-search"></i>
+                                <span id="dropdownText">Select cities...</span>
+                            </div>
+                            <span>▼</span>
+                        </button>
+
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <div class="search-input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="searchInput" 
+                                    class="search-input" 
+                                    placeholder="Search cities..."
+                                >
+                            </div>
+                            <div class="items-list" id="citiesList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style Selection (visible when customize checked) -->
+                <div class="control-group style-selection-container" id="styleSelectionContainer">
+                    <div class="style-selection-title">
+                        <i class="fas fa-palette"></i>
+                        <span id="styleSelectionTitle">Select a city first</span>
+                    </div>
+                    <div class="styles-grid" id="stylesGrid"></div>
+                </div>
+            </div>
+
+            <!-- Selected Cities Tags -->
+            <div class="selected-tags" id="selectedTags"></div>
+        </div>
+
+        <!-- Clocks Grid -->
+        <div class="clocks-grid" id="clocksGrid"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <p class="empty-text">Select cities from the dropdown to get started</p>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script>
+        // Comprehensive city timezone database with timezone offsets
+        const cities = [
+            // Asia
+            { name: 'Tokyo', timezone: 'Asia/Tokyo', flag: '🇯🇵', offset: '+09:00' },
+            { name: 'Bangkok', timezone: 'Asia/Bangkok', flag: '🇹🇭', offset: '+07:00' },
+            { name: 'Hong Kong', timezone: 'Asia/Hong_Kong', flag: '🇭🇰', offset: '+08:00' },
+            { name: 'Singapore', timezone: 'Asia/Singapore', flag: '🇸🇬', offset: '+08:00' },
+            { name: 'Mumbai', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Delhi', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Kolkata', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Bangalore', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Erode', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Chennai', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Hyderabad', timezone: 'Asia/Kolkata', flag: '🇮🇳', offset: '+05:30' },
+            { name: 'Shanghai', timezone: 'Asia/Shanghai', flag: '🇨🇳', offset: '+08:00' },
+            { name: 'Beijing', timezone: 'Asia/Shanghai', flag: '🇨🇳', offset: '+08:00' },
+            { name: 'Seoul', timezone: 'Asia/Seoul', flag: '🇰🇷', offset: '+09:00' },
+            { name: 'Dubai', timezone: 'Asia/Dubai', flag: '🇦🇪', offset: '+04:00' },
+            { name: 'Jakarta', timezone: 'Asia/Jakarta', flag: '🇮🇩', offset: '+07:00' },
+            { name: 'Manila', timezone: 'Asia/Manila', flag: '🇵🇭', offset: '+08:00' },
+            { name: 'Kuala Lumpur', timezone: 'Asia/Kuala_Lumpur', flag: '🇲🇾', offset: '+08:00' },
+            { name: 'Tel Aviv', timezone: 'Asia/Jerusalem', flag: '🇮🇱', offset: '+02:00' },
+            { name: 'New Taipei', timezone: 'Asia/Taipei', flag: '🇹🇼', offset: '+08:00' },
+            { name: 'Karachi', timezone: 'Asia/Karachi', flag: '🇵🇰', offset: '+05:00' },
+            { name: 'Lahore', timezone: 'Asia/Karachi', flag: '🇵🇰', offset: '+05:00' },
+            { name: 'Hanoi', timezone: 'Asia/Ho_Chi_Minh', flag: '🇻🇳', offset: '+07:00' },
+            { name: 'Ho Chi Minh', timezone: 'Asia/Ho_Chi_Minh', flag: '🇻🇳', offset: '+07:00' },
+            { name: 'Yangon', timezone: 'Asia/Yangon', flag: '🇲🇲', offset: '+06:30' },
+            { name: 'Dhaka', timezone: 'Asia/Dhaka', flag: '🇧🇩', offset: '+06:00' },
+            { name: 'Kathmandu', timezone: 'Asia/Kathmandu', flag: '🇳🇵', offset: '+05:45' },
+            { name: 'Riyadh', timezone: 'Asia/Riyadh', flag: '🇸🇦', offset: '+03:00' },
+            { name: 'Baghdad', timezone: 'Asia/Baghdad', flag: '🇮🇶', offset: '+03:00' },
+            { name: 'Tehran', timezone: 'Asia/Tehran', flag: '🇮🇷', offset: '+03:30' },
+            
+            // Europe
+            { name: 'London', timezone: 'Europe/London', flag: '🇬🇧', offset: '+00:00' },
+            { name: 'Paris', timezone: 'Europe/Paris', flag: '🇫🇷', offset: '+01:00' },
+            { name: 'Berlin', timezone: 'Europe/Berlin', flag: '🇩🇪', offset: '+01:00' },
+            { name: 'Madrid', timezone: 'Europe/Madrid', flag: '🇪🇸', offset: '+01:00' },
+            { name: 'Rome', timezone: 'Europe/Rome', flag: '🇮🇹', offset: '+01:00' },
+            { name: 'Amsterdam', timezone: 'Europe/Amsterdam', flag: '🇳🇱', offset: '+01:00' },
+            { name: 'Brussels', timezone: 'Europe/Brussels', flag: '🇧🇪', offset: '+01:00' },
+            { name: 'Vienna', timezone: 'Europe/Vienna', flag: '🇦🇹', offset: '+01:00' },
+            { name: 'Prague', timezone: 'Europe/Prague', flag: '🇨🇿', offset: '+01:00' },
+            { name: 'Istanbul', timezone: 'Europe/Istanbul', flag: '🇹🇷', offset: '+03:00' },
+            { name: 'Moscow', timezone: 'Europe/Moscow', flag: '🇷🇺', offset: '+03:00' },
+            { name: 'Dublin', timezone: 'Europe/Dublin', flag: '🇮🇪', offset: '+00:00' },
+            { name: 'Lisbon', timezone: 'Europe/Lisbon', flag: '🇵🇹', offset: '+00:00' },
+            { name: 'Stockholm', timezone: 'Europe/Stockholm', flag: '🇸🇪', offset: '+01:00' },
+            { name: 'Zurich', timezone: 'Europe/Zurich', flag: '🇨🇭', offset: '+01:00' },
+            { name: 'Athens', timezone: 'Europe/Athens', flag: '🇬🇷', offset: '+02:00' },
+            { name: 'Warsaw', timezone: 'Europe/Warsaw', flag: '🇵🇱', offset: '+01:00' },
+            { name: 'Budapest', timezone: 'Europe/Budapest', flag: '🇭🇺', offset: '+01:00' },
+            { name: 'Helsinki', timezone: 'Europe/Helsinki', flag: '🇫🇮', offset: '+02:00' },
+            { name: 'Oslo', timezone: 'Europe/Oslo', flag: '🇳🇴', offset: '+01:00' },
+            
+            // Americas
+            { name: 'New York', timezone: 'America/New_York', flag: '🇺🇸', offset: '-05:00' },
+            { name: 'Los Angeles', timezone: 'America/Los_Angeles', flag: '🇺🇸', offset: '-08:00' },
+            { name: 'Chicago', timezone: 'America/Chicago', flag: '🇺🇸', offset: '-06:00' },
+            { name: 'Denver', timezone: 'America/Denver', flag: '🇺🇸', offset: '-07:00' },
+            { name: 'Toronto', timezone: 'America/Toronto', flag: '🇨🇦', offset: '-05:00' },
+            { name: 'Vancouver', timezone: 'America/Vancouver', flag: '🇨🇦', offset: '-08:00' },
+            { name: 'Mexico City', timezone: 'America/Mexico_City', flag: '🇲🇽', offset: '-06:00' },
+            { name: 'São Paulo', timezone: 'America/Sao_Paulo', flag: '🇧🇷', offset: '-03:00' },
+            { name: 'Buenos Aires', timezone: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', offset: '-03:00' },
+            { name: 'Santiago', timezone: 'America/Santiago', flag: '🇨🇱', offset: '-03:00' },
+            { name: 'Lima', timezone: 'America/Lima', flag: '🇵🇪', offset: '-05:00' },
+            { name: 'Bogotá', timezone: 'America/Bogota', flag: '🇨🇴', offset: '-05:00' },
+            { name: 'Caracas', timezone: 'America/Caracas', flag: '🇻🇪', offset: '-04:00' },
+            { name: 'Anchorage', timezone: 'America/Anchorage', flag: '🇺🇸', offset: '-09:00' },
+            { name: 'Honolulu', timezone: 'Pacific/Honolulu', flag: '🇺🇸', offset: '-10:00' },
+            
+            // Oceania
+            { name: 'Sydney', timezone: 'Australia/Sydney', flag: '🇦🇺', offset: '+10:00' },
+            { name: 'Melbourne', timezone: 'Australia/Melbourne', flag: '🇦🇺', offset: '+10:00' },
+            { name: 'Auckland', timezone: 'Pacific/Auckland', flag: '🇳🇿', offset: '+12:00' },
+            { name: 'Fiji', timezone: 'Pacific/Fiji', flag: '🇫🇯', offset: '+12:00' },
+            { name: 'Samoa', timezone: 'Pacific/Apia', flag: '🇼🇸', offset: '+13:00' },
+            
+            // Africa
+            { name: 'Cairo', timezone: 'Africa/Cairo', flag: '🇪🇬', offset: '+02:00' },
+            { name: 'Lagos', timezone: 'Africa/Lagos', flag: '🇳🇬', offset: '+01:00' },
+            { name: 'Johannesburg', timezone: 'Africa/Johannesburg', flag: '🇿🇦', offset: '+02:00' },
+            { name: 'Nairobi', timezone: 'Africa/Nairobi', flag: '🇰🇪', offset: '+03:00' },
+            { name: 'Casablanca', timezone: 'Africa/Casablanca', flag: '🇲🇦', offset: '+01:00' },
+            { name: 'Cape Town', timezone: 'Africa/Johannesburg', flag: '🇿🇦', offset: '+02:00' },
+            { name: 'Accra', timezone: 'Africa/Accra', flag: '🇬🇭', offset: '+00:00' },
+            { name: 'Addis Ababa', timezone: 'Africa/Addis_Ababa', flag: '🇪🇹', offset: '+03:00' },
+            { name: 'Khartoum', timezone: 'Africa/Khartoum', flag: '🇸🇩', offset: '+02:00' },
+            { name: 'Dar es Salaam', timezone: 'Africa/Dar_es_Salaam', flag: '🇹🇿', offset: '+03:00' },
+        ];
+
+        // Dial styles
+        const dialStyles = [
+            { id: 'modern', name: 'Modern', class: 'dial-modern' },
+            { id: 'minimal', name: 'Minimal', class: 'dial-minimal' },
+            { id: 'elegant', name: 'Elegant', class: 'dial-elegant' },
+            { id: 'sunset', name: 'Sunset', class: 'dial-sunset' },
+            { id: 'ocean', name: 'Ocean', class: 'dial-ocean' },
+            { id: 'forest', name: 'Forest', class: 'dial-forest' },
+            { id: 'neon', name: 'Neon', class: 'dial-neon' },
+            { id: 'vintage', name: 'Vintage', class: 'dial-vintage' },
+            { id: 'cotton-candy', name: 'Cotton', class: 'dial-cotton-candy' },
+            { id: 'aurora', name: 'Aurora', class: 'dial-aurora' },
+            { id: 'crimson', name: 'Crimson', class: 'dial-crimson' },
+            { id: 'olive', name: 'Olive', class: 'dial-olive' },
+            { id: 'indigo', name: 'Indigo', class: 'dial-indigo' },
+            { id: 'rose', name: 'Rose', class: 'dial-rose' },
+            { id: 'sky', name: 'Sky', class: 'dial-sky' },
+            { id: 'digital', name: 'Digital', class: 'dial-digital' },
+            { id: 'digital-dark', name: 'Dig Dark', class: 'dial-digital-dark' },
+            { id: 'digital-tech', name: 'Dig Tech', class: 'dial-digital-tech' },
+            { id: 'digital-neon-blue', name: 'Dig Neon', class: 'dial-digital-neon-blue' },
+            { id: 'digital-cyberpunk', name: 'Dig Cyber', class: 'dial-digital-cyberpunk' },
+            { id: 'digital-midnight', name: 'Dig Night', class: 'dial-digital-midnight' },
+            { id: 'digital-space', name: 'Dig Space', class: 'dial-digital-space' },
+            { id: 'digital-forest', name: 'Dig Forest', class: 'dial-digital-forest' },
+            { id: 'digital-ocean', name: 'Dig Ocean', class: 'dial-digital-ocean' },
+            { id: 'digital-sunset', name: 'Dig Sunset', class: 'dial-digital-sunset' },
+            { id: 'digital-vintage', name: 'Dig Vintage', class: 'dial-digital-vintage' },
+        ];
+
+        let selectedCities = [];
+        let clockStyles = {};
+        let allCities = [...cities];
+        let customizeMode = false;
+        let selectedCityForStyle = null;
+        let hasUnsavedChanges = false;
+
+        // DOM Elements
+        const dropdownBtn = document.getElementById('dropdownBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const searchInput = document.getElementById('searchInput');
+        const citiesList = document.getElementById('citiesList');
+        const dropdownText = document.getElementById('dropdownText');
+        const selectedTags = document.getElementById('selectedTags');
+        const clocksGrid = document.getElementById('clocksGrid');
+        const emptyState = document.getElementById('emptyState');
+        const themeToggle = document.getElementById('themeToggle');
+        const customizeCheckbox = document.getElementById('customizeClocks');
+        const styleSelectionContainer = document.getElementById('styleSelectionContainer');
+        const stylesGrid = document.getElementById('stylesGrid');
+        const styleSelectionTitle = document.getElementById('styleSelectionTitle');
+        const saveBtn = document.getElementById('saveBtn');
+
+        // Load saved configuration
+        function loadConfiguration() {
+            const saved = localStorage.getItem('worldClockConfig');
+            if (saved) {
+                const config = JSON.parse(saved);
+                selectedCities = config.cities || [];
+                clockStyles = config.styles || {};
+            }
+            updateUI();
+        }
+
+        // Save configuration
+        function saveConfiguration() {
+            const config = {
+                cities: selectedCities,
+                styles: clockStyles
+            };
+            localStorage.setItem('worldClockConfig', JSON.stringify(config));
+            hasUnsavedChanges = false;
+            saveBtn.classList.add('hidden');
+            showToast('✓ Configuration saved successfully!');
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Mark changes
+        function markChanges() {
+            hasUnsavedChanges = true;
+            saveBtn.classList.remove('hidden');
+        }
+
+        // Save button click
+        saveBtn.addEventListener('click', saveConfiguration);
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            updateThemeIcon();
+        });
+
+        function updateThemeIcon() {
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            updateThemeIcon();
+        }
+
+        // Customize checkbox
+        customizeCheckbox.addEventListener('change', (e) => {
+            customizeMode = e.target.checked;
+            styleSelectionContainer.classList.toggle('active', customizeMode);
+            if (customizeMode) {
+                styleSelectionTitle.textContent = 'Click on a city tag to select its style';
+            }
+            updateUI();
+        });
+
+        // Toggle Dropdown
+        dropdownBtn.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('active');
+            if (dropdownMenu.classList.contains('active')) {
+                searchInput.focus();
+            }
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown-wrapper')) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            renderCitiesList(query);
+        });
+
+        // Calculate time for timezone
+        function getTimeForTimezone(timezone) {
+            try {
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: timezone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                });
+                const parts = formatter.formatToParts(new Date());
+                const timeObj = {};
+                parts.forEach(part => {
+                    if (part.type !== 'literal') timeObj[part.type] = part.value;
+                });
+                return {
+                    hours: parseInt(timeObj.hour),
+                    minutes: parseInt(timeObj.minute),
+                    seconds: parseInt(timeObj.second),
+                    year: parseInt(timeObj.year),
+                    month: parseInt(timeObj.month),
+                    day: parseInt(timeObj.day),
+                };
+            } catch (e) {
+                return { hours: 0, minutes: 0, seconds: 0, year: 2024, month: 1, day: 1 };
+            }
+        }
+
+        // Render cities list
+        function renderCitiesList(query = '') {
+            citiesList.innerHTML = '';
+            const filtered = allCities.filter(city =>
+                city.name.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                citiesList.innerHTML = '<div class="no-items-msg">No cities found</div>';
+                return;
+            }
+
+            filtered.forEach(city => {
+                const isSelected = selectedCities.includes(city.name);
+                const isDisabled = selectedCities.length >= 6 && !isSelected;
+                
+                const item = document.createElement('button');
+                item.className = `item ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`;
+                item.disabled = isDisabled;
+                item.innerHTML = `
+                    <span class="item-flag">${city.flag}</span>
+                    <div class="item-content">
+                        <div class="item-name">${city.name}</div>
+                        <div class="item-meta">GMT${city.offset}</div>
+                    </div>
+                    ${isSelected ? '<span class="checkmark">✓</span>' : ''}
+                `;
+                
+                if (!isDisabled) {
+                    item.addEventListener('click', () => toggleCity(city.name));
+                }
+                
+                citiesList.appendChild(item);
+            });
+        }
+
+        // Render styles
+        function renderStyles() {
+            stylesGrid.innerHTML = '';
+            if (!selectedCityForStyle) return;
+
+            dialStyles.forEach((style) => {
+                const btn = document.createElement('button');
+                btn.className = `style-btn ${clockStyles[selectedCityForStyle] === style.id ? 'active' : ''}`;
+                btn.innerHTML = `
+                    <div class="style-preview ${style.class}"></div>
+                    <div class="style-name">${style.name}</div>
+                `;
+                btn.addEventListener('click', () => {
+                    clockStyles[selectedCityForStyle] = style.id;
+                    markChanges();
+                    renderStyles();
+                    updateUI();
+                });
+                stylesGrid.appendChild(btn);
+            });
+        }
+
+        // Toggle city selection
+        function toggleCity(cityName) {
+            if (selectedCities.includes(cityName)) {
+                selectedCities = selectedCities.filter(c => c !== cityName);
+                delete clockStyles[cityName];
+            } else if (selectedCities.length < 6) {
+                selectedCities.push(cityName);
+                // Auto-assign style
+                clockStyles[cityName] = dialStyles[selectedCities.length - 1]?.id || 'modern';
+            }
+            markChanges();
+            updateUI();
+            searchInput.value = '';
+            renderCitiesList();
+        }
+
+        // Remove city
+        window.removeCity = function(cityName) {
+            selectedCities = selectedCities.filter(c => c !== cityName);
+            delete clockStyles[cityName];
+            markChanges();
+            updateUI();
+        };
+
+        // Select city for style
+        window.selectCityForStyle = function(cityName) {
+            selectedCityForStyle = cityName;
+            styleSelectionTitle.textContent = `Select style for ${cityName}`;
+            renderStyles();
+        };
+
+        // Update dropdown text
+        function updateDropdownText() {
+            if (selectedCities.length === 0) {
+                dropdownText.textContent = 'Select cities...';
+            } else {
+                dropdownText.textContent = `${selectedCities.length} selected`;
+            }
+        }
+
+        // Render selected tags
+        function renderSelectedTags() {
+            selectedTags.innerHTML = '';
+            selectedCities.forEach((cityName) => {
+                const city = allCities.find(c => c.name === cityName);
+                const styleId = clockStyles[cityName] || 'modern';
+                const styleName = dialStyles.find(s => s.id === styleId)?.name || 'Modern';
+                
+                const tag = document.createElement('div');
+                tag.className = 'city-tag';
+                tag.innerHTML = `
+                    <div class="city-tag-content">
+                        <span>${city.flag}</span>
+                        <span>${cityName}</span>
+                        <span class="city-tag-style">${styleName}</span>
+                    </div>
+                    <div class="city-tag-buttons">
+                        ${customizeMode ? `<button class="edit-city-btn" onclick="selectCityForStyle('${cityName}')">✏️</button>` : ''}
+                        <button class="remove-city-btn" onclick="removeCity('${cityName}')">×</button>
+                    </div>
+                `;
+                selectedTags.appendChild(tag);
+            });
+        }
+
+        // Get grid class
+        function getGridClass() {
+            const count = selectedCities.length;
+            return `grid-${count}`;
+        }
+
+        // Get clock size
+        function getClockSize() {
+            const count = selectedCities.length;
+            switch (count) {
+                case 1: return 'size-1';
+                case 2: return 'size-2';
+                case 3: return 'size-3';
+                case 4: return 'size-4';
+                case 5: return 'size-5';
+                case 6: return 'size-6';
+                default: return 'size-3';
+            }
+        }
+
+        // Render clocks
+        function renderClocks() {
+            clocksGrid.innerHTML = '';
+            clocksGrid.className = `clocks-grid ${getGridClass()}`;
+
+            if (selectedCities.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            selectedCities.forEach((cityName) => {
+                const city = allCities.find(c => c.name === cityName);
+                const styleId = clockStyles[cityName] || dialStyles[0]?.id || 'modern';
+                const clockEl = createClock(city, styleId);
+                clocksGrid.appendChild(clockEl);
+            });
+        }
+
+        // Create clock element
+        function createClock(city, styleId) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'clock-wrapper';
+
+            const clockSize = getClockSize();
+            const time = getTimeForTimezone(city.timezone);
+            const dialStyle = dialStyles.find(d => d.id === styleId);
+            const isDigital = styleId === 'digital';
+
+            // Calculate hand positions
+            const secondDegrees = (time.seconds / 60) * 360;
+            const minuteDegrees = (time.minutes / 60) * 360 + (time.seconds / 60) * 6;
+            const hourDegrees = (time.hours % 12) / 12 * 360 + (time.minutes / 60) * 30;
+
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const dateStr = `${time.day}-${monthNames[time.month - 1]}-${time.year}`;
+
+            let clockContent;
+            if (isDigital) {
+                clockContent = `
+                    <div class="digital-clock ${dialStyle.class}">
+                        <div class="digital-time">${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}</div>
+                        <div class="digital-date">${dateStr}</div>
+                    </div>
+                `;
+            } else {
+                clockContent = `
+                    <div class="clock-face ${dialStyle.class}">
+                        ${createHourMarkers(styleId)}
+                        <div class="hand second" style="height: 30%; width: 2px; background: #ff6b6b; transform: rotate(${secondDegrees}deg); transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);"></div>
+                        <div class="hand minute" style="height: 24%; width: 4px; background: ${getHandColor(styleId)}; transform: rotate(${minuteDegrees}deg); transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);"></div>
+                        <div class="hand hour" style="height: 18%; width: 5px; background: ${getHandColor(styleId)}; transform: rotate(${hourDegrees}deg); transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);"></div>
+                        <div class="center-dot" style="width: 12px; height: 12px; background: ${getCenterDotColor(styleId)};"></div>
+                    </div>
+                `;
+            }
+
+            wrapper.innerHTML = `
+                <div class="clock ${clockSize}">
+                    ${clockContent}
+                </div>
+                <div class="clock-info">
+                    <div class="clock-city-name">${city.name}</div>
+                    <div class="clock-time">${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}</div>
+                    <div class="clock-timezone">GMT${city.offset}</div>
+                </div>
+            `;
+
+            return wrapper;
+        }
+
+        // Get hand color
+        function getHandColor(styleId) {
+            const colors = {
+                'modern': '#ffffff', 'minimal': '#1f2937', 'elegant': '#ffffff', 'sunset': '#ffffff',
+                'ocean': '#ffffff', 'forest': '#ffffff', 'neon': '#00ff00', 'vintage': '#ffffff',
+                'cotton-candy': '#ffffff', 'aurora': '#ffffff', 'crimson': '#ffffff', 'olive': '#ffffff',
+                'indigo': '#ffffff', 'rose': '#ffffff', 'sky': '#ffffff', 'digital': '#ffffff',
+                'digital-dark': '#00ff88', 'digital-tech': '#00ccff', 'digital-neon-blue': '#00ffff',
+                'digital-cyberpunk': '#ff00ff', 'digital-midnight': '#0099ff', 'digital-space': '#ff00ff',
+                'digital-forest': '#00ff00', 'digital-ocean': '#00ffff', 'digital-sunset': '#ffaa00',
+                'digital-vintage': '#ffff00',
+            };
+            return colors[styleId] || '#ffffff';
+        }
+
+        // Get center dot color
+        function getCenterDotColor(styleId) {
+            const colors = {
+                'modern': '#ffffff', 'minimal': '#1f2937', 'elegant': '#ffffff', 'sunset': '#ffffff',
+                'ocean': '#ffffff', 'forest': '#ffffff', 'neon': '#00ff00', 'vintage': '#000000',
+                'cotton-candy': '#ffffff', 'aurora': '#ffffff', 'crimson': '#ffffff', 'olive': '#ffffff',
+                'indigo': '#ffffff', 'rose': '#ffffff', 'sky': '#ffffff', 'digital': '#ffffff',
+                'digital-dark': '#00ff88', 'digital-tech': '#00ccff', 'digital-neon-blue': '#00ffff',
+                'digital-cyberpunk': '#ff00ff', 'digital-midnight': '#0099ff', 'digital-space': '#ff00ff',
+                'digital-forest': '#00ff00', 'digital-ocean': '#00ffff', 'digital-sunset': '#ffaa00',
+                'digital-vintage': '#ffff00',
+            };
+            return colors[styleId] || '#ffffff';
+        }
+
+        // Create hour markers
+        function createHourMarkers(styleId) {
+            let markers = '';
+            const isDarkDial = ['elegant', 'neon'].includes(styleId);
+            const markerColor = isDarkDial ? '#ffffff' : '#1f2937';
+            
+            for (let i = 0; i < 12; i++) {
+                const isMainHour = i % 3 === 0;
+                const height = isMainHour ? '20px' : '12px';
+                const width = isMainHour ? '3px' : '2px';
+                const rotation = (i + 1) * 30;
+                
+                markers += `<div class="hour-marker" style="
+                    height: ${height};
+                    width: ${width};
+                    top: 2%;
+                    left: 50%;
+                    background: ${markerColor};
+                    opacity: ${isMainHour ? '1' : '0.7'};
+                    transform: translateX(-50%) rotate(${rotation}deg);
+                    transform-origin: center 48%;
+                "></div>`;
+            }
+            return markers;
+        }
+
+        // Update UI
+        function updateUI() {
+            updateDropdownText();
+            renderSelectedTags();
+            renderCitiesList();
+            renderClocks();
+        }
+
+        // Update clock hands every second
+        function updateClockHands() {
+            const cities = document.querySelectorAll('.clock-wrapper');
+
+            cities.forEach((clockWrapper, index) => {
+                const cityName = selectedCities[index];
+                if (!cityName) return;
+
+                const city = allCities.find(c => c.name === cityName);
+                const styleId = clockStyles[cityName];
+                const isDigital = styleId === 'digital';
+                const time = getTimeForTimezone(city.timezone);
+
+                if (isDigital) {
+                    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const dateStr = `${time.day}-${monthNames[time.month - 1]}-${time.year}`;
+                    const digitalTime = clockWrapper.querySelector('.digital-time');
+                    const digitalDate = clockWrapper.querySelector('.digital-date');
+                    if (digitalTime) digitalTime.textContent = `${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}`;
+                    if (digitalDate) digitalDate.textContent = dateStr;
+                } else {
+                    const secondDegrees = (time.seconds / 60) * 360;
+                    const minuteDegrees = (time.minutes / 60) * 360 + (time.seconds / 60) * 6;
+                    const hourDegrees = (time.hours % 12) / 12 * 360 + (time.minutes / 60) * 30;
+
+                    const hands = clockWrapper.querySelectorAll('.hand');
+                    hands[0].style.transform = `rotate(${secondDegrees}deg)`;
+                    hands[1].style.transform = `rotate(${minuteDegrees}deg)`;
+                    hands[2].style.transform = `rotate(${hourDegrees}deg)`;
+                }
+
+                const timeEl = clockWrapper.querySelector('.clock-time');
+                timeEl.textContent = `${String(time.hours).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}`;
+            });
+        }
+
+        // Initialize
+        loadConfiguration();
+        setInterval(updateClockHands, 1000);
+    </script>
+</body>
+</html>

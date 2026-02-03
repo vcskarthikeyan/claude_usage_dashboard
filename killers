@@ -1,0 +1,4 @@
+pkill -f "streamlit run app.py"
+pkill -f "collector.py --daemon"
+pkill -f "gemini_collector.py --daemon"
+

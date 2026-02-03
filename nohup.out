@@ -1,0 +1,353 @@
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-02 10:07:42.928 Script compilation error
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 574, in _run_script
+    code = self._script_cache.get_bytecode(script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_cache.py", line 72, in get_bytecode
+    filebody = magic.add_magic(filebody, script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/magic.py", line 45, in add_magic
+    tree = ast.parse(code, script_path, "exec")
+  File "/usr/lib/python3.13/ast.py", line 50, in parse
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 864
+    'Current session has <strong style="color:{c};
+    ^
+SyntaxError: unterminated string literal (detected at line 864)
+2026-02-02 10:07:43.236 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8502
+  Network URL: http://192.168.44.128:8502
+
+  Stopping...
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-02 10:58:44.556 Script compilation error
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 574, in _run_script
+    code = self._script_cache.get_bytecode(script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_cache.py", line 72, in get_bytecode
+    filebody = magic.add_magic(filebody, script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/magic.py", line 45, in add_magic
+    tree = ast.parse(code, script_path, "exec")
+  File "/usr/lib/python3.13/ast.py", line 50, in parse
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 717
+    '</style>'.replace("{{{{", "{").replace("}}}}",
+                                           ^
+SyntaxError: '(' was never closed
+2026-02-02 10:58:44.568 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-02-02 10:58:47.864 Script compilation error
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 574, in _run_script
+    code = self._script_cache.get_bytecode(script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_cache.py", line 72, in get_bytecode
+    filebody = magic.add_magic(filebody, script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/magic.py", line 45, in add_magic
+    tree = ast.parse(code, script_path, "exec")
+  File "/usr/lib/python3.13/ast.py", line 50, in parse
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 717
+    '</style>'.replace("{{{{", "{").replace("}}}}",
+                                           ^
+SyntaxError: '(' was never closed
+2026-02-02 10:58:47.867 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-02-02 10:59:10.635 Script compilation error
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 574, in _run_script
+    code = self._script_cache.get_bytecode(script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_cache.py", line 72, in get_bytecode
+    filebody = magic.add_magic(filebody, script_path)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/magic.py", line 45, in add_magic
+    tree = ast.parse(code, script_path, "exec")
+  File "/usr/lib/python3.13/ast.py", line 50, in parse
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 717
+    '</style>'.replace("{{{{", "{").replace("}}}}",
+                                           ^
+SyntaxError: '(' was never closed
+2026-02-02 10:59:10.644 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-02 11:27:36.280 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 838, in <module>
+    if gemini_collector is not None:
+       ^^^^^^^^^^^^^^^^
+NameError: name 'gemini_collector' is not defined
+2026-02-02 11:27:47.448 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 838, in <module>
+    if gemini_collector is not None:
+       ^^^^^^^^^^^^^^^^
+NameError: name 'gemini_collector' is not defined
+2026-02-02 11:32:47.894 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 838, in <module>
+    if gemini_collector is not None:
+       ^^^^^^^^^^^^^^^^
+NameError: name 'gemini_collector' is not defined
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-02 16:22:17.831 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+2026-02-02 16:22:21.471 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-03 13:12:44.858 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+2026-02-03 13:12:46.481 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-03 13:24:09.227 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+2026-02-03 13:24:12.943 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 568, in <module>
+    gemini_collector = read_gemini_summary() # Initialize gemini_collector here as well
+                       ^^^^^^^^^^^^^^^^^^^
+NameError: name 'read_gemini_summary' is not defined
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-03 13:44:20.970 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 855, in <module>
+    gemini_sess_used = gemini_effective_cost(g_sess)
+                       ^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'gemini_effective_cost' is not defined
+2026-02-03 13:49:22.134 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 958, in <module>
+    _world_clock_js_final = _world_clock_js % timezones_json
+                            ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+TypeError: not enough arguments for format string
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+2026-02-03 14:19:33.784 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 958, in <module>
+    _world_clock_js_final = _world_clock_js % timezones_json
+                            ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+TypeError: not enough arguments for format string
+2026-02-03 14:19:37.371 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "/home/karthik/AIProjects/claude_usage_dashboard/.venv/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 672, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/karthik/AIProjects/claude_usage_dashboard/app.py", line 958, in <module>
+    _world_clock_js_final = _world_clock_js % timezones_json
+                            ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+TypeError: not enough arguments for format string
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
+  Stopping...
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.44.128:8501
+
