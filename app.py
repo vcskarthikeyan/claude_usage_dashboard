@@ -347,31 +347,56 @@ if dashboard_active:
 
 # --- Live countdown + clock JavaScript ---
 # This runs client-side and ticks every second regardless of Streamlit reruns.
-# Use the real session reset time from collector if available, else from manual session start.
+# Priority: synced value > collector value > manual session start
 _window_end_epoch_ms = 0
 _col_data = read_collector_summary() if dashboard_active else None
-_sess_resets = _col_data.get("session_resets_at") if _col_data else None
-if _sess_resets:
+
+# Session reset: try synced first
+_sess_synced_raw = persisted.get("session_reset_synced")
+if _sess_synced_raw:
     try:
-        _we = datetime.fromisoformat(_sess_resets)
-        _window_end_epoch_ms = int(_we.timestamp() * 1000)
+        _we = datetime.fromisoformat(_sess_synced_raw)
+        if _we > datetime.now():
+            _window_end_epoch_ms = int(_we.timestamp() * 1000)
     except (ValueError, TypeError):
         pass
+# Then collector
+if _window_end_epoch_ms == 0:
+    _sess_resets = _col_data.get("session_resets_at") if _col_data else None
+    if _sess_resets:
+        try:
+            _we = datetime.fromisoformat(_sess_resets)
+            _window_end_epoch_ms = int(_we.timestamp() * 1000)
+        except (ValueError, TypeError):
+            pass
+# Then manual session start
 if _window_end_epoch_ms == 0:
     _session_start_val = st.session_state.get("session_start")
     if _session_start_val:
         _we = _session_start_val + timedelta(hours=WINDOW_HOURS)
         _window_end_epoch_ms = int(_we.timestamp() * 1000)
 
-# Weekly reset epoch for JS countdown
+# Weekly reset epoch: try synced anchor first, then collector
 _week_reset_epoch_ms = 0
-_week_resets = _col_data.get("weekly_resets_at") if _col_data else None
-if _week_resets:
+_week_anchor_raw = persisted.get("weekly_anchor")
+if _week_anchor_raw:
     try:
-        _wr = datetime.fromisoformat(_week_resets)
+        _wa = datetime.fromisoformat(_week_anchor_raw)
+        _wr = _wa
+        _now = datetime.now()
+        while _wr <= _now:
+            _wr += timedelta(days=7)
         _week_reset_epoch_ms = int(_wr.timestamp() * 1000)
     except (ValueError, TypeError):
         pass
+if _week_reset_epoch_ms == 0:
+    _week_resets = _col_data.get("weekly_resets_at") if _col_data else None
+    if _week_resets:
+        try:
+            _wr = datetime.fromisoformat(_week_resets)
+            _week_reset_epoch_ms = int(_wr.timestamp() * 1000)
+        except (ValueError, TypeError):
+            pass
 
 # st.markdown strips <script> tags. Use st.components.v1.html() instead —
 # it renders in an iframe that executes JS, and uses parent.document to
@@ -634,19 +659,39 @@ with st.sidebar:
 
         st.divider()
 
-        # --- Calibrate with Claude ---
+        # --- Sync with Claude ---
         with st.expander("Sync with Claude"):
             st.caption(
-                "Enter the percentages shown on claude.ai/settings to calibrate."
+                "Enter values from claude.ai > Settings > Usage to sync."
             )
+
+            st.markdown("**Usage percentages**")
             cal_sess = st.number_input(
                 "Session % on claude.ai", min_value=1, max_value=100, value=19,
             )
             cal_week = st.number_input(
                 "Weekly % on claude.ai", min_value=1, max_value=100, value=32,
             )
-            if st.button("Calibrate", use_container_width=True):
-                # Read current collector data to compute caps
+
+            st.markdown("**Session resets in**")
+            _sr_cols = st.columns(2)
+            with _sr_cols[0]:
+                sr_hours = st.number_input("Hours", min_value=0, max_value=5, value=3, key="sr_h")
+            with _sr_cols[1]:
+                sr_mins = st.number_input("Minutes", min_value=0, max_value=59, value=0, key="sr_m")
+
+            st.markdown("**Weekly resets in**")
+            _wr_cols = st.columns(2)
+            with _wr_cols[0]:
+                wr_days = st.number_input("Days", min_value=0, max_value=7, value=3, key="wr_d")
+            with _wr_cols[1]:
+                wr_hours = st.number_input("Hours", min_value=0, max_value=23, value=0, key="wr_h")
+
+            if st.button("Sync", use_container_width=True):
+                _now = datetime.now()
+                d = load_data()
+
+                # 1) Calibrate usage caps from percentages
                 _col = read_collector_summary()
                 if _col:
                     _cs = _col.get("session", {})
@@ -655,13 +700,33 @@ with st.sidebar:
                     _we = effective_cost(_cw)
                     new_s_cap = _se / (cal_sess / 100.0) if cal_sess > 0 else SESS_CAP_DEFAULT
                     new_w_cap = _we / (cal_week / 100.0) if cal_week > 0 else WEEK_CAP_DEFAULT
-                    d = load_data()
                     d["usage_caps"] = {"session": round(new_s_cap, 2), "weekly": round(new_w_cap, 2)}
-                    save_data(d)
-                    st.success("Calibrated")
-                    st.rerun()
-                else:
-                    st.error("No collector data yet. Start the dashboard first.")
+
+                # 2) Session reset: now + countdown → exact reset datetime
+                _sess_reset = _now + timedelta(hours=sr_hours, minutes=sr_mins)
+                d["session_reset_synced"] = _sess_reset.isoformat()
+                d["session_reset_synced_at"] = _now.isoformat()
+
+                # 3) Weekly reset: now + countdown → exact reset datetime
+                #    Derive the anchor (start of this cycle) = reset - 7 days
+                _week_reset = _now + timedelta(days=wr_days, hours=wr_hours)
+                _week_anchor = _week_reset - timedelta(days=7)
+                d["weekly_reset_synced"] = _week_reset.isoformat()
+                d["weekly_anchor"] = _week_anchor.isoformat()
+
+                save_data(d)
+                st.success("Synced reset times from server")
+                st.rerun()
+
+            # Show current sync status
+            _d = load_data()
+            _sync_info = []
+            if "weekly_anchor" in _d:
+                _sync_info.append("Weekly anchor synced")
+            if "session_reset_synced" in _d:
+                _sync_info.append("Session reset synced")
+            if _sync_info:
+                st.caption(" | ".join(_sync_info))
 
 
 # ==================== Tab Navigation ====================
@@ -747,21 +812,47 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Stopped state: show idle screen ---
+# --- Stopped state: show idle screen with prominent start button ---
 if not dashboard_active:
+    _idle_pad = '120px 20px' if _is_fullscreen else '80px 20px'
+    _idle_icon = '80px' if _is_fullscreen else '64px'
+    _idle_title = '28px' if _is_fullscreen else '22px'
+    _idle_sub = '16px' if _is_fullscreen else '15px'
     st.markdown(
-        '<div style="text-align:center;padding:80px 20px;font-family:-apple-system,BlinkMacSystemFont,'
+        '<div style="text-align:center;padding:{pad};font-family:-apple-system,BlinkMacSystemFont,'
         '\'Segoe UI\',Roboto,sans-serif;">'
-        '  <div style="font-size:64px;margin-bottom:20px;">&#9211;</div>'
-        '  <div style="font-size:22px;font-weight:600;color:#444;margin-bottom:10px;">'
+        '  <div style="font-size:{icon};margin-bottom:20px;">&#9211;</div>'
+        '  <div style="font-size:{title};font-weight:600;color:#444;margin-bottom:10px;">'
         '    Dashboard is stopped</div>'
-        '  <div style="font-size:15px;color:#888;max-width:480px;margin:0 auto;line-height:1.6;">'
-        '    No background processes are running. Zero CPU usage.<br>'
-        '    Click <strong>Start Dashboard</strong> in the sidebar to begin tracking your session '
-        '    and collecting usage data.</div>'
-        '</div>',
+        '  <div style="font-size:{sub};color:#888;max-width:480px;margin:0 auto 36px;line-height:1.6;">'
+        '    No background processes are running. Zero CPU usage.</div>'
+        '</div>'.format(pad=_idle_pad, icon=_idle_icon, title=_idle_title, sub=_idle_sub),
         unsafe_allow_html=True,
     )
+    # Centered attractive start button
+    _btn_cols = st.columns([2, 1, 2])
+    with _btn_cols[1]:
+        st.markdown(
+            '<style>'
+            'div[data-testid="stButton"]#start-dash-btn button{'
+            'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)!important;'
+            'color:#fff!important;border:none!important;padding:16px 40px!important;'
+            'font-size:18px!important;font-weight:600!important;border-radius:12px!important;'
+            'box-shadow:0 4px 15px rgba(102,126,234,0.4)!important;'
+            'transition:all 0.3s ease!important;letter-spacing:0.5px!important;}'
+            'div[data-testid="stButton"]#start-dash-btn button:hover{'
+            'box-shadow:0 6px 20px rgba(102,126,234,0.6)!important;'
+            'transform:translateY(-2px)!important;}'
+            '</style>',
+            unsafe_allow_html=True,
+        )
+        if st.button("Start Dashboard", key="start_dash_main", use_container_width=True, type="primary"):
+            start_collector()
+            st.session_state["session_start"] = datetime.now()
+            d = load_data()
+            d["session_start"] = st.session_state["session_start"].isoformat()
+            save_data(d)
+            st.rerun()
     st.stop()
 
 
@@ -809,45 +900,86 @@ else:
 sess_pct = min(sess_used / sess_cap * 100, 100) if sess_cap > 0 else 0
 week_pct = min(week_used / week_cap * 100, 100) if week_cap > 0 else 0
 
-# Session reset: from collector data (oldest call in window + 5h)
+# Session reset: prefer synced value, fallback to collector estimate
 now = datetime.now()
-_sess_resets_raw = collector.get("session_resets_at") if collector else None
-if _sess_resets_raw:
+sess_reset_dt = None
+_sess_source = ""
+
+# Try synced session reset first (from manual Sync with Claude)
+_sess_synced = persisted.get("session_reset_synced")
+if _sess_synced:
     try:
-        sess_reset_dt = datetime.fromisoformat(_sess_resets_raw)
-        _sess_remaining = sess_reset_dt - now
-        if _sess_remaining.total_seconds() > 0:
-            sess_reset_str = "resets {t} ({cd})".format(
-                t=sess_reset_dt.strftime("%I:%M %p"),
-                cd=fmt(_sess_remaining),
-            )
-        else:
-            sess_reset_str = "reset (window clear)"
+        _sdt = datetime.fromisoformat(_sess_synced)
+        if _sdt > now:
+            sess_reset_dt = _sdt
+            _sess_source = "synced"
     except (ValueError, TypeError):
-        sess_reset_str = "5-hour rolling window"
+        pass
+
+# Fallback to collector estimate
+if sess_reset_dt is None:
+    _sess_resets_raw = collector.get("session_resets_at") if collector else None
+    if _sess_resets_raw:
+        try:
+            sess_reset_dt = datetime.fromisoformat(_sess_resets_raw)
+            _sess_source = "estimated"
+        except (ValueError, TypeError):
+            pass
+
+if sess_reset_dt is not None:
+    _sess_remaining = sess_reset_dt - now
+    if _sess_remaining.total_seconds() > 0:
+        sess_reset_str = "resets {t} ({cd})".format(
+            t=sess_reset_dt.strftime("%I:%M %p"),
+            cd=fmt(_sess_remaining),
+        )
+    else:
+        sess_reset_str = "reset (window clear)"
 else:
     sess_reset_str = "no usage in current window"
 
-# Weekly reset: from collector data (account creation + 7-day cycle)
-_week_resets_raw = collector.get("weekly_resets_at") if collector else None
-if _week_resets_raw:
+# Weekly reset: prefer synced anchor, fallback to collector
+week_reset_dt = None
+_week_source = ""
+
+# If user synced a weekly anchor, compute next reset from that
+_week_anchor_raw = persisted.get("weekly_anchor")
+if _week_anchor_raw:
     try:
-        week_reset_dt = datetime.fromisoformat(_week_resets_raw)
-        _week_remaining = week_reset_dt - now
-        _days_left = _week_remaining.days
-        if _days_left > 0:
-            week_reset_str = "resets {dt} ({d}d {h}h)".format(
-                dt=week_reset_dt.strftime("%a, %b %d %I:%M %p"),
-                d=_days_left,
-                h=int((_week_remaining.seconds) / 3600),
-            )
-        else:
-            week_reset_str = "resets {dt} ({h}h)".format(
-                dt=week_reset_dt.strftime("today %I:%M %p"),
-                h=int(_week_remaining.total_seconds() / 3600),
-            )
+        _wa = datetime.fromisoformat(_week_anchor_raw)
+        # Advance by 7-day intervals from anchor until past now
+        _wr = _wa
+        while _wr <= now:
+            _wr += timedelta(days=7)
+        week_reset_dt = _wr
+        _week_source = "synced"
     except (ValueError, TypeError):
-        week_reset_str = ""
+        pass
+
+# Fallback to collector's weekly reset
+if week_reset_dt is None:
+    _week_resets_raw = collector.get("weekly_resets_at") if collector else None
+    if _week_resets_raw:
+        try:
+            week_reset_dt = datetime.fromisoformat(_week_resets_raw)
+            _week_source = "estimated"
+        except (ValueError, TypeError):
+            pass
+
+if week_reset_dt is not None:
+    _week_remaining = week_reset_dt - now
+    _days_left = _week_remaining.days
+    if _days_left > 0:
+        week_reset_str = "resets {dt} ({d}d {h}h)".format(
+            dt=week_reset_dt.strftime("%a, %b %d %I:%M %p"),
+            d=_days_left,
+            h=int((_week_remaining.seconds) / 3600),
+        )
+    else:
+        week_reset_str = "resets {dt} ({h}h)".format(
+            dt=week_reset_dt.strftime("today %I:%M %p"),
+            h=int(_week_remaining.total_seconds() / 3600),
+        )
 else:
     week_reset_str = ""
 
